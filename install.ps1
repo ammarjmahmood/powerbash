@@ -1,14 +1,16 @@
 # PowerBash Installation Script for PowerShell
 # Run with: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser (if needed)
 # Then: .\install.ps1
+# Or: irm https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1 | iex
 # Note: This script uses 'py' (Python launcher) instead of 'python' for PowerShell compatibility
 
 $ErrorActionPreference = "Stop"
 
 $InstallDir = "$env:USERPROFILE\.powerbash"
-$RepoUrl = "https://github.com/yourusername/powerbash.git"
+$RepoBase = "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main"
 
 Write-Host "Installing PowerBash..." -ForegroundColor Cyan
+Write-Host "This will download files from GitHub if needed..." -ForegroundColor Gray
 
 # Check for Python (use 'py' launcher for PowerShell compatibility)
 try {
@@ -20,35 +22,64 @@ try {
     exit 1
 }
 
-# Get script directory (where install.ps1 is located)
-$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Function to download file from GitHub
+function Download-File {
+    param(
+        [string]$Url,
+        [string]$Destination
+    )
+    try {
+        Write-Host "Downloading $(Split-Path -Leaf $Destination)..." -ForegroundColor Gray
+        Invoke-WebRequest -Uri $Url -OutFile $Destination -UseBasicParsing -ErrorAction Stop
+        return $true
+    } catch {
+        Write-Host "Failed to download $Url" -ForegroundColor Red
+        return $false
+    }
+}
+
+# Get script directory (where install.ps1 is located, if running from local file)
+$scriptPath = $null
+if ($MyInvocation.MyCommand.Path) {
+    $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
 
 # Create installation directory
 if (Test-Path $InstallDir) {
     Write-Host "Updating existing installation..." -ForegroundColor Yellow
-    Set-Location $InstallDir
-    # Try to update via git if it's a git repo, otherwise copy files
-    if (Test-Path ".git") {
-        git pull --quiet 2>$null
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host "Git update failed, copying files instead..." -ForegroundColor Yellow
-            Copy-Item "$scriptPath\powerbash.py" -Destination "$InstallDir\powerbash.py" -Force
-            Copy-Item "$scriptPath\nl_to_cmd.py" -Destination "$InstallDir\nl_to_cmd.py" -Force
-            Copy-Item "$scriptPath\requirements.txt" -Destination "$InstallDir\requirements.txt" -Force
-        }
-    } else {
-        Copy-Item "$scriptPath\powerbash.py" -Destination "$InstallDir\powerbash.py" -Force
-        Copy-Item "$scriptPath\nl_to_cmd.py" -Destination "$InstallDir\nl_to_cmd.py" -Force
-        Copy-Item "$scriptPath\requirements.txt" -Destination "$InstallDir\requirements.txt" -Force
-    }
 } else {
     Write-Host "Creating installation directory..." -ForegroundColor Yellow
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+}
+
+Set-Location $InstallDir
+
+# Download required files from GitHub if not found locally
+$filesToDownload = @(
+    @{Name="powerbash.py"; Url="$RepoBase/powerbash.py"},
+    @{Name="nl_to_cmd.py"; Url="$RepoBase/nl_to_cmd.py"},
+    @{Name="requirements.txt"; Url="$RepoBase/requirements.txt"},
+    @{Name="PowerBash.psm1"; Url="$RepoBase/PowerBash.psm1"}
+)
+
+foreach ($file in $filesToDownload) {
+    $localPath = Join-Path $InstallDir $file.Name
+    $localScriptPath = Join-Path $scriptPath $file.Name
     
-    # Copy files from current directory
-    Copy-Item "$scriptPath\powerbash.py" -Destination "$InstallDir\powerbash.py" -Force
-    Copy-Item "$scriptPath\nl_to_cmd.py" -Destination "$InstallDir\nl_to_cmd.py" -Force
-    Copy-Item "$scriptPath\requirements.txt" -Destination "$InstallDir\requirements.txt" -Force
+    # First try to copy from local script directory (if running from cloned repo)
+    if ($scriptPath -and (Test-Path $localScriptPath)) {
+        Copy-Item $localScriptPath -Destination $localPath -Force
+        Write-Host "Copied $($file.Name) from local directory" -ForegroundColor Gray
+    }
+    # If not found locally, download from GitHub
+    elseif (-not (Test-Path $localPath)) {
+        if (-not (Download-File -Url $file.Url -Destination $localPath)) {
+            Write-Host "Error: Failed to download $($file.Name)" -ForegroundColor Red
+            exit 1
+        }
+    } else {
+        Write-Host "Found existing $($file.Name)" -ForegroundColor Gray
+    }
 }
 
 Set-Location $InstallDir
@@ -101,7 +132,7 @@ $ModuleDir = "$env:USERPROFILE\Documents\PowerShell\Modules\PowerBash"
 if (-not (Test-Path $ModuleDir)) {
     New-Item -ItemType Directory -Path $ModuleDir -Force | Out-Null
 }
-Copy-Item "$scriptPath\PowerBash.psm1" -Destination "$ModuleDir\PowerBash.psm1" -Force
+Copy-Item "$InstallDir\PowerBash.psm1" -Destination "$ModuleDir\PowerBash.psm1" -Force
 
 # Create PowerShell function in profile
 $PowerBashFunction = @"
