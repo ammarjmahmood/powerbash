@@ -19,32 +19,31 @@ Use bash commands and natural language in PowerShell/Windows Command Prompt.
 
 **Note**: The installer uses the `py` Python launcher (not `python`) for PowerShell compatibility. This is the standard way to access Python on Windows in PowerShell.
 
-### Easiest Method (One Command)
+### Recommended Method (Download First)
+
+```powershell
+# Navigate to your home directory
+cd $HOME
+
+# Download the installer
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1" -OutFile install.ps1
+
+# Set execution policy (one-time, for this session)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# Run the installer
+.\install.ps1
+```
+
+### Alternative: One-Line Install
 
 ```powershell
 irm https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1 | iex
 ```
 
-This downloads and runs the installer directly - no need to save files manually!
-
-### Alternative: Download First
-
-```powershell
-# Download the installer
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1" -OutFile install.ps1
-
-# Run it
-.\install.ps1
-```
-
-**Note**: If you get an execution policy error, run:
+**Note**: If you get an execution policy error with the one-line method, use the recommended method above or run:
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Or for a one-time bypass:
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 ## Uninstall
@@ -162,6 +161,9 @@ tee file                # Write to file and stdout
 sed 's/old/new/g' file  # Stream editor
 tr 'a' 'b'              # Translate characters
 man command             # Manual pages
+nano file               # Text editor (uses notepad on Windows if nano not available)
+vi file                 # Text editor (uses notepad on Windows if vim not available)
+vim file                # Text editor (uses notepad on Windows if vim not available)
 ```
 
 **Path Utilities:**
@@ -237,6 +239,7 @@ Bash commands (`ls`, `cd`, `python3`, etc.) work immediately without setup!
 | `tar`, `zip`, `unzip` | `Compress-Archive`, `Expand-Archive` | Archives |
 | `less`, `more`, `tee` | `more`, `Tee-Object` | Text View |
 | `sed`, `tr` | String replacement, translation | Text Proc |
+| `nano`, `vi`, `vim` | `notepad.exe` (fallback) or native if available | Text Editor |
 | `basename`, `dirname`, `realpath` | `Split-Path`, `Resolve-Path` | Path Utils |
 | `man`, `sudo` | `Get-Help`, `Start-Process -Verb RunAs` | Utilities |
 | `echo`, `date`, `clear` | `Write-Host`, `Get-Date`, `Clear-Host` | Utilities |

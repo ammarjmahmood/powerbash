@@ -177,5 +177,5 @@ Write-Host ""
 Write-Host "First time setup (for 'plz' commands):" -ForegroundColor Yellow
 Write-Host "   PS> plz-setup              # Configure Gemini API key" -ForegroundColor Gray
 Write-Host ""
-Write-Host "Bash commands: ls, cd, pwd, python3, grep, cat, mkdir, rm, cp, mv, touch, head, tail, clear" -ForegroundColor Cyan
+Write-Host "Bash commands: ls, cd, pwd, python3, grep, cat, mkdir, rm, cp, mv, touch, head, tail, clear, nano, vim" -ForegroundColor Cyan
 Write-Host ""

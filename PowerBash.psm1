@@ -553,6 +553,56 @@ function Invoke-sudo {
     }
 }
 
+# Nano (text editor - uses notepad on Windows as fallback)
+function Invoke-nano {
+    param([string[]]$Arguments)
+    if ($Arguments) {
+        $file = $Arguments[0]
+        # Check if nano is available (might be from Git Bash, WSL, etc.)
+        $nanoCmd = Get-Command nano -ErrorAction SilentlyContinue
+        if ($nanoCmd) {
+            & nano $Arguments
+        } else {
+            # Fallback to notepad on Windows
+            if (Test-Path $file) {
+                notepad.exe $file
+            } else {
+                # Create new file with notepad
+                notepad.exe $file
+            }
+        }
+    } else {
+        Write-Host "Usage: nano <file>" -ForegroundColor Yellow
+    }
+}
+
+# Vi/Vim (text editor - uses notepad on Windows as fallback)
+function Invoke-vi {
+    param([string[]]$Arguments)
+    Invoke-vim $Arguments
+}
+
+function Invoke-vim {
+    param([string[]]$Arguments)
+    if ($Arguments) {
+        $file = $Arguments[0]
+        # Check if vim is available (might be from Git Bash, WSL, etc.)
+        $vimCmd = Get-Command vim -ErrorAction SilentlyContinue
+        if ($vimCmd) {
+            & vim $Arguments
+        } else {
+            # Fallback to notepad on Windows
+            if (Test-Path $file) {
+                notepad.exe $file
+            } else {
+                notepad.exe $file
+            }
+        }
+    } else {
+        Write-Host "Usage: vim <file>" -ForegroundColor Yellow
+    }
+}
+
 # Create aliases (these work directly in PowerShell)
 Set-Alias -Name ls -Value Invoke-ls -Scope Global -Option AllScope
 Set-Alias -Name python3 -Value Invoke-python3 -Scope Global -Option AllScope
@@ -600,6 +650,9 @@ Set-Alias -Name tr -Value Invoke-tr -Scope Global -Option AllScope
 Set-Alias -Name sed -Value Invoke-sed -Scope Global -Option AllScope
 Set-Alias -Name man -Value Invoke-man -Scope Global -Option AllScope
 Set-Alias -Name sudo -Value Invoke-sudo -Scope Global -Option AllScope
+Set-Alias -Name nano -Value Invoke-nano -Scope Global -Option AllScope
+Set-Alias -Name vi -Value Invoke-vi -Scope Global -Option AllScope
+Set-Alias -Name vim -Value Invoke-vim -Scope Global -Option AllScope
 
 # Simple aliases (no function needed)
 Set-Alias -Name pwd -Value Get-Location -Scope Global -Option AllScope
@@ -713,12 +766,12 @@ function plz-setup {
 }
 
 # Export aliases and functions
-Export-ModuleMember -Alias ls, python3, grep, touch, head, tail, wc, find, which, sort, uniq, cut, diff, echo, date, uptime, df, du, free, ps, kill, killall, jobs, history, alias, export, source, uname, ping, curl, wget, ifconfig, netstat, tar, zip, unzip, less, more, tee, basename, dirname, realpath, tr, sed, man, sudo, pwd, clear, cat, whoami
-Export-ModuleMember -Function Invoke-ls, Invoke-python3, Invoke-grep, Invoke-touch, Invoke-head, Invoke-tail, Invoke-wc, Invoke-find, Invoke-which, Invoke-sort, Invoke-uniq, Invoke-cut, Invoke-diff, Invoke-echo, Invoke-date, Invoke-uptime, Invoke-df, Invoke-du, Invoke-free, Invoke-ps, Invoke-kill, Invoke-killall, Invoke-jobs, Invoke-history, Invoke-alias, Invoke-export, Invoke-source, Invoke-uname, Invoke-ping, Invoke-curl, Invoke-wget, Invoke-ifconfig, Invoke-netstat, Invoke-tar, Invoke-zip, Invoke-unzip, Invoke-less, Invoke-more, Invoke-tee, Invoke-basename, Invoke-dirname, Invoke-realpath, Invoke-tr, Invoke-sed, Invoke-man, Invoke-sudo, Invoke-whoami, plz, plz-setup
+Export-ModuleMember -Alias ls, python3, grep, touch, head, tail, wc, find, which, sort, uniq, cut, diff, echo, date, uptime, df, du, free, ps, kill, killall, jobs, history, alias, export, source, uname, ping, curl, wget, ifconfig, netstat, tar, zip, unzip, less, more, tee, basename, dirname, realpath, tr, sed, man, sudo, nano, vi, vim, pwd, clear, cat, whoami
+Export-ModuleMember -Function Invoke-ls, Invoke-python3, Invoke-grep, Invoke-touch, Invoke-head, Invoke-tail, Invoke-wc, Invoke-find, Invoke-which, Invoke-sort, Invoke-uniq, Invoke-cut, Invoke-diff, Invoke-echo, Invoke-date, Invoke-uptime, Invoke-df, Invoke-du, Invoke-free, Invoke-ps, Invoke-kill, Invoke-killall, Invoke-jobs, Invoke-history, Invoke-alias, Invoke-export, Invoke-source, Invoke-uname, Invoke-ping, Invoke-curl, Invoke-wget, Invoke-ifconfig, Invoke-netstat, Invoke-tar, Invoke-zip, Invoke-unzip, Invoke-less, Invoke-more, Invoke-tee, Invoke-basename, Invoke-dirname, Invoke-realpath, Invoke-tr, Invoke-sed, Invoke-man, Invoke-sudo, Invoke-nano, Invoke-vi, Invoke-vim, Invoke-whoami, plz, plz-setup
 
 # Display welcome message (only once per session)
 if (-not $global:PowerBashLoaded) {
     Write-Host "PowerBash loaded! 60+ bash commands work directly. Use 'plz' for natural language." -ForegroundColor Cyan
-    Write-Host "Examples: ls, cd, python3, grep, find, ps, kill, curl, tar, zip, wc, sort, diff, sed, less, man" -ForegroundColor Yellow
+    Write-Host "Examples: ls, cd, python3, grep, find, ps, kill, curl, tar, zip, wc, sort, diff, sed, less, man, nano, vim" -ForegroundColor Yellow
     $global:PowerBashLoaded = $true
 }
