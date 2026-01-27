@@ -4,6 +4,8 @@ Use bash commands and natural language in PowerShell/Windows Command Prompt.
 
 > **Requirements**: Windows 10+ with PowerShell and Python 3.8+
 > 
+> **Note**: PowerBash uses the `py` Python launcher (not `python`) for PowerShell compatibility. The `py` command should work automatically on Windows when Python is installed.
+> 
 > **Security Note**: See [SECURITY.md](SECURITY.md) for privacy and security information, especially if using on a work laptop.
 
 ## Features
@@ -15,11 +17,13 @@ Use bash commands and natural language in PowerShell/Windows Command Prompt.
 
 ## Install
 
+**Note**: The installer uses the `py` Python launcher (not `python`) for PowerShell compatibility. This is the standard way to access Python on Windows in PowerShell.
+
 ### Option 1: Direct Install (Recommended)
 
 ```powershell
 # Download and run the installer
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/powerbash/main/install.ps1" -OutFile install.ps1
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1" -OutFile install.ps1
 .\install.ps1
 ```
 
@@ -27,7 +31,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/powerbash
 
 1. Clone this repository:
 ```powershell
-git clone https://github.com/yourusername/powerbash.git
+git clone https://github.com/ammarjmahmood/powerbash.git
 cd powerbash
 ```
 
@@ -49,7 +53,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 Or download and run:
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/yourusername/powerbash/main/uninstall.ps1" -OutFile uninstall.ps1
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/uninstall.ps1" -OutFile uninstall.ps1
 .\uninstall.ps1
 ```
 
@@ -279,9 +283,11 @@ what's the current directory?
 
 ## Troubleshooting
 
-### "Python is not recognized"
+### "Python is not recognized" or "py is not recognized"
 - Install Python from https://www.python.org/
 - Make sure to check "Add Python to PATH" during installation
+- On Windows, Python is typically accessed via the `py` launcher in PowerShell (not `python`)
+- The installer uses `py --version` to check for Python installation
 
 ### "Execution policy error"
 ```powershell

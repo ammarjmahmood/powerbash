@@ -46,7 +46,7 @@ function Invoke-ls {
 
 function Invoke-python3 {
     param([string[]]$Arguments)
-    python $Arguments
+    py $Arguments
 }
 
 function Invoke-grep {

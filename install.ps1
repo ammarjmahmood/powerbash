@@ -1,6 +1,7 @@
 # PowerBash Installation Script for PowerShell
 # Run with: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser (if needed)
 # Then: .\install.ps1
+# Note: This script uses 'py' (Python launcher) instead of 'python' for PowerShell compatibility
 
 $ErrorActionPreference = "Stop"
 
@@ -9,12 +10,13 @@ $RepoUrl = "https://github.com/yourusername/powerbash.git"
 
 Write-Host "Installing PowerBash..." -ForegroundColor Cyan
 
-# Check for Python
+# Check for Python (use 'py' launcher for PowerShell compatibility)
 try {
-    $pythonVersion = python --version 2>&1
+    $pythonVersion = py --version 2>&1
     Write-Host "Found: $pythonVersion" -ForegroundColor Green
 } catch {
     Write-Host "Python is required. Please install Python 3.8+ from https://www.python.org/" -ForegroundColor Red
+    Write-Host "Note: On Windows, Python is typically accessed via 'py' command in PowerShell" -ForegroundColor Yellow
     exit 1
 }
 
@@ -56,12 +58,12 @@ Write-Host "Setting up Python environment..." -ForegroundColor Yellow
 if (Test-Path "venv") {
     Remove-Item -Recurse -Force "venv"
 }
-python -m venv venv
+py -m venv venv
 
 # Activate and install dependencies
 & "$InstallDir\venv\Scripts\Activate.ps1"
-python -m pip install --quiet --upgrade pip
-python -m pip install --quiet -r requirements.txt
+py -m pip install --quiet --upgrade pip
+py -m pip install --quiet -r requirements.txt
 
 # Create powerbash command script
 Write-Host "Creating powerbash command..." -ForegroundColor Yellow
@@ -73,7 +75,7 @@ if (-not (Test-Path $BinDir)) {
 $PowerBashScript = @"
 @echo off
 call "$InstallDir\venv\Scripts\activate.bat"
-python "$InstallDir\powerbash.py" %*
+py "$InstallDir\powerbash.py" %*
 "@
 
 $PowerBashScript | Out-File -FilePath "$BinDir\powerbash.bat" -Encoding ASCII
