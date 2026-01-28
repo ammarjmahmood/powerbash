@@ -112,10 +112,20 @@ py "$InstallDir\powerbash.py" %*
 $PowerBashScript | Out-File -FilePath "$BinDir\powerbash.bat" -Encoding ASCII
 
 # Create PowerShell function
+# Be robust if $PROFILE.CurrentUserAllHosts is null (can happen in some Windows PowerShell setups)
 $PowerShellProfile = $PROFILE.CurrentUserAllHosts
+if (-not $PowerShellProfile) {
+    # Fallback to the current host profile path
+    $PowerShellProfile = $PROFILE
+}
+if (-not $PowerShellProfile) {
+    # Final fallback: construct a reasonable default for Windows PowerShell
+    $PowerShellProfile = Join-Path $env:USERPROFILE "Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+}
+
 $ProfileDir = Split-Path -Parent $PowerShellProfile
 
-if (-not (Test-Path $ProfileDir)) {
+if ($ProfileDir -and -not (Test-Path $ProfileDir)) {
     New-Item -ItemType Directory -Path $ProfileDir -Force | Out-Null
 }
 
@@ -147,7 +157,7 @@ function powerbash {
 }
 "@
 
-if (Test-Path $PowerShellProfile) {
+if ($PowerShellProfile -and (Test-Path $PowerShellProfile)) {
     $ProfileContent = Get-Content $PowerShellProfile -Raw
     if ($ProfileContent -notlike "*PowerBash*") {
         Add-Content -Path $PowerShellProfile -Value $PowerBashFunction

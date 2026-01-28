@@ -48,13 +48,34 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ## Uninstall
 
+You can uninstall PowerBash **from any directory** – no need to be in the repo folder.
+
+### Easiest: One-Line Uninstall (Anywhere)
+
 ```powershell
+irm https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/uninstall.ps1 | iex
+```
+
+### Alternative: Download Then Run (Anywhere)
+
+```powershell
+# From any folder (e.g. your home directory)
+cd $HOME
+
+# Download the uninstaller
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/uninstall.ps1" -OutFile uninstall.ps1
+
+# Set execution policy (one-time, for this session)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# Run the uninstaller
 .\uninstall.ps1
 ```
 
-Or download and run:
+### If You Cloned the Repo Locally
+
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/uninstall.ps1" -OutFile uninstall.ps1
+cd $HOME\Documents\powerbash   # or wherever you cloned it
 .\uninstall.ps1
 ```
 
