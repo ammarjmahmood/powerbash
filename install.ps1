@@ -157,17 +157,22 @@ function powerbash {
 }
 "@
 
-if ($PowerShellProfile -and (Test-Path $PowerShellProfile)) {
-    $ProfileContent = Get-Content $PowerShellProfile -Raw
-    if ($ProfileContent -notlike "*PowerBash*") {
-        Add-Content -Path $PowerShellProfile -Value $PowerBashFunction
-        Write-Host "Added PowerBash function to PowerShell profile" -ForegroundColor Green
+if ($PowerShellProfile) {
+    if (Test-Path $PowerShellProfile) {
+        $ProfileContent = Get-Content $PowerShellProfile -Raw
+        if ($ProfileContent -notlike "*PowerBash*") {
+            Add-Content -Path $PowerShellProfile -Value $PowerBashFunction
+            Write-Host "Added PowerBash function to PowerShell profile" -ForegroundColor Green
+        } else {
+            Write-Host "PowerBash already in PowerShell profile" -ForegroundColor Yellow
+        }
     } else {
-        Write-Host "PowerBash already in PowerShell profile" -ForegroundColor Yellow
+        Set-Content -Path $PowerShellProfile -Value $PowerBashFunction
+        Write-Host "Created PowerShell profile with PowerBash function" -ForegroundColor Green
     }
 } else {
-    Set-Content -Path $PowerShellProfile -Value $PowerBashFunction
-    Write-Host "Created PowerShell profile with PowerBash function" -ForegroundColor Green
+    Write-Host "Warning: Could not determine PowerShell profile path; skipping profile update." -ForegroundColor Yellow
+    Write-Host "You can still run 'powerbash' manually from any session." -ForegroundColor Yellow
 }
 
 Write-Host ""
