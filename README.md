@@ -84,6 +84,17 @@ cd $HOME\Documents\powerbash   # or wherever you cloned it
 
 After installation, **restart PowerShell** and everything works automatically:
 
+### Shells Supported
+
+- **PowerShell**: PowerBash hooks into PowerShell only. All features (`ls`, `grep`, `plz`, etc.) work here.
+- **Command Prompt (`cmd.exe`)**: PowerBash does **not** modify `cmd`. To use bash-style commands from Command Prompt, first start PowerShell:
+
+```cmd
+powershell
+```
+
+Then run the usual PowerBash commands inside that PowerShell window.
+
 ### Bash Commands (Automatic)
 
 Bash commands work directly - no special command needed:
