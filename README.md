@@ -19,31 +19,32 @@ Use bash commands and natural language in PowerShell/Windows Command Prompt.
 
 **Note**: The installer uses the `py` Python launcher (not `python`) for PowerShell compatibility. This is the standard way to access Python on Windows in PowerShell.
 
-### Recommended Method (Copy & Paste, Download First)
+### Recommended Install (Copy & Paste Friendly)
+
+Run these commands **one by one** in PowerShell:
+
+**1) Go to your home directory (anywhere is fine, this is just clean):**
 
 ```powershell
-# 1) Go to your home directory (anywhere is fine, this is just clean)
 cd $HOME
+```
 
-# 2) Download the installer script
+**2) Download the installer script:**
+
+```powershell
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1" -OutFile install.ps1
+```
 
-# 3) Allow this script for this session only (optional but recommended)
+**3) Allow this script for this session only (optional but recommended):**
+
+```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
 
-# 4) Run the installer script directly (no '| iex')
+**4) Run the installer script directly (no '| iex'):**
+
+```powershell
 .\install.ps1
-```
-
-### Alternative: One-Line Install
-
-```powershell
-irm https://raw.githubusercontent.com/ammarjmahmood/powerbash/main/install.ps1 | iex
-```
-
-**Note**: If you get an execution policy error with the one-line method, use the recommended method above or run:
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ## Uninstall
